@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-zinc-900">
+    <div class="flex h-screen justify-center items-center">
+        <div class="bg-zinc-800 border border-zinc-700 w-[500px] overflow-y-auto p-4 flex flex-col justify-center items-center">
+            <table class="w-full text-white">
+                <thead>
+                    <tr>
+                        <th class="text-center uppercase">Název</th>
+                        <th class="text-center uppercase">Cena za kus</th>
+                        <th class="text-center uppercase">Počet na skladě</th>
+                        <th class="text-center uppercase">Akce</th>
+                    </tr>
+                </thead>
+                <tbody id="table">
+
+                </tbody>
+        </div>
+    </div>
+    <div class="flex justify-center items-center p-4">
+        <button class="bg-green-700 text-white px-2 py-1 rounded-lg" onclick="mostExpensive()">MOST EXPENSIVE</button>
+        <button class="bg-red-700 text-white px-2 py-1 rounded-lg ml-2" onclick="borderAmount()">BORDER AMOUNT</button>
+        <button class="bg-blue-700 text-white px-2 py-1 rounded-lg ml-2" onclick="inventoryValue()">INVENTORY VALUE</button>
+    </div>
+    <script>
+        const tableElement = document.getElementById("table");
+        const produkty = [
+            { nazev: "Tužka", cenaZaKus: 10, pocetNaSklade: 100 },
+            { nazev: "Sešit", cenaZaKus: 20, pocetNaSklade: 150 },
+            { nazev: "Batoh", cenaZaKus: 500, pocetNaSklade: 50 },
+            { nazev: "Pravítko", cenaZaKus: 30, pocetNaSklade: 75 },
+            { nazev: "Pero", cenaZaKus: 40, pocetNaSklade: 200 },
+            { nazev: "Kalkulačka", cenaZaKus: 200, pocetNaSklade: 30 },
+            { nazev: "Barvy", cenaZaKus: 150, pocetNaSklade: 80 },
+            { nazev: "Štětce", cenaZaKus: 60, pocetNaSklade: 120 },
+            { nazev: "Ležidlo", cenaZaKus: 300, pocetNaSklade: 40 },
+            { nazev: "Mapa světa", cenaZaKus: 180, pocetNaSklade: 60 }
+        ];
+
+        const loadProducts = () => {
+            for (let i = 0; i < produkty.length; i++) {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td class="text-center">${produkty[i].nazev}</td>
+                    <td class="text-center">${produkty[i].cenaZaKus}</td>
+                    <td class="text-center">${produkty[i].pocetNaSklade}</td>
+                    <td class="text-center">
+                        <button class="bg-blue-700 text-white px-2 py-1 rounded-lg" onclick="upk(${i})">UKP</button>
+                        <button class="bg-red-700 text-white px-2 py-1 rounded-lg" onclick="zc(${i}, parseInt(prompt('Zadejte novou cenu za kus')))">ZC</button>
+                    </td>
+                `;
+                tableElement.appendChild(tr);
+            }
+        }
+
+        const upk = (index) => {
+            const amount = parseInt(prompt("Zadejte množství kusů"));
+            if (amount > 0) {
+                produkty[index].pocetNaSklade = amount;
+                tableElement.innerHTML = "";
+                loadProducts();
+            }
+        }
+
+        const zc = (index, newPrice) => {
+            produkty[index].cenaZaKus = newPrice;
+            tableElement.innerHTML = "";
+            loadProducts();
+        }
+
+        const mostExpensive = () => {
+            produkty.sort((a, b) => b.cenaZaKus - a.cenaZaKus);
+            tableElement.innerHTML = "";
+            loadProducts();
+        }
+
+        const borderAmount = () => {
+            const borderamount = parseInt(prompt("Zadejte množství kusů"));
+            const filtered = produkty.filter((product) => product.pocetNaSklade < borderamount);
+            alert("Počet produktů s méně než " + borderamount + " kusů: " + filtered.length + ", produkty: " + filtered.map((product) => product.nazev).join(", "));
+        }
+
+        const inventoryValue = () => {
+            const value = produkty.reduce((acc, product) => acc + product.cenaZaKus * product.pocetNaSklade, 0);
+            alert("Hodnota skladu: " + value);
+        }
+
+        loadProducts();
+    </script>
+</body>
+</html>
